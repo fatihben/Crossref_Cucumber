@@ -5,4 +5,3 @@ Feature: XML file validation
     Then Validate Status Code
     Then Verify title
     Then Assert DOI number
-    Then Conclude the test

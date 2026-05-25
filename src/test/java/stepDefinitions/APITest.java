@@ -56,12 +56,7 @@ public class APITest {
         assertNotNull(doi);
         assertEquals("10.1007/s10696-011-9101-8", doi);
     }
-    @Then("Conclude the test")
 
-        public void conclude_the_test () {
-
-
-        }
     @Given("I send an unauthorized GET request to CrossRef")
     public void i_send_an_unauthorized_get_request_to_cross_ref() {
         response =
@@ -76,7 +71,7 @@ public class APITest {
 
                         .get("https://www.crossref.org/openurl");
         String body = response.asString();
-        assertNotNull(response.asString(), "Sunucudan hiçbir yanıt alınamadı!");
+        assertNotNull(response.asString(), "No response from server!");
 
         assertTrue(body.contains("The login you supplied is not recognized"));
 
@@ -138,11 +133,26 @@ public class APITest {
     }
     @Then("All responses should contain resolved status")
     public void all_responses_should_contain_resolved_status() {
-       // for (Response response : responses) {
-        //    String body = response.asString();
-           // assertTrue(body.contains("resolved"));
-       // }
-    }
+        for (Response response : responses) {
 
+            String body = response.asString();
 
-}
+            System.out.println("FULL RESPONSE:");
+            System.out.println(body);
+
+            XmlPath xml = new XmlPath(body);
+
+            String status = xml.getString(
+                    "**.find { it.name() == 'query' }.@status"
+            );
+
+            System.out.println("EXTRACTED STATUS -> [" + status + "]");
+
+            assertEquals(
+                    "STATUS FAILED! BODY: \n" + body,
+                    "resolved",
+                    status
+            );
+        }
+
+    }}
